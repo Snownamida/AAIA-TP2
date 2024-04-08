@@ -101,10 +101,47 @@ int StateGraph::h3(const State &s) const {
   // Insert your code here to implement a more informed heuristic!
   return c;
 }
-
-int StateGraph::heuristic(const State &s) const {
+int StateGraph::h4(const State &s) const {
   // return a lower bound of the length of the shortest path from s to a final
   // state
+  int c = h1(s);
+
+  auto lastCol = s.stack.back();
+  int nbBonBlock = 0;
+  int lettreDuBonBlock = 'a' + nbBlocs - 1;
+  bool flag = 0;
+
+  for (unsigned long i = 0; i < lastCol.length(); i++) {
+    if (lastCol[i] == lettreDuBonBlock) {
+      ++nbBonBlock;
+      --lettreDuBonBlock;
+    } else {
+      flag = 1;
+      break;
+    }
+  }
+
+  if (!flag)
+    return 0;
+
+  int nbUpperBlock = 0;
+  for (auto it = s.stack.begin(); it < s.stack.end() - 1; ++it) {
+    auto col = *it;
+    for (unsigned long i = 0; i < col.length(); i++) {
+
+      if (col[i] == lettreDuBonBlock) {
+        nbUpperBlock = col.length() - i - 1;
+        goto ret;
+      }
+    }
+  }
+ret:
+  return c + 2 * (lastCol.length() - nbBonBlock) + 2 * nbUpperBlock;
+}
+
+int StateGraph::heuristic(const State &s) const {
+  // return a lower bound of the length of the shortest path from s to a
+  // final state
   return h2(s);
 }
 

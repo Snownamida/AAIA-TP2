@@ -38,6 +38,7 @@ public:
   int h1(const State &s) const;
   int h2(const State &s) const;
   int h3(const State &s) const;
+  int h4(const State &s) const;
 
   int heuristic(const State &s) const;
   // Return a lower bound of the length of the shortest path from s to a final
