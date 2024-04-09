@@ -96,14 +96,15 @@ int StateGraph::h4(const State &s) const {
   // 在不是最后一列的列上, 查看有多少个方块在它之下有比它大的方块.
   // 这些方块需要在某一时刻挪到不是最后一列的位置上,
   // 让它们下面那些比它大的方块先去最后一列
+  // 算法 : 对于每一列, 从下往上遍历. 让每一个方块和它之下的最大方块作比较
   for (auto it = s.stack.begin(); it < s.stack.end() - 1; ++it) {
     auto col = *it;
+    char maxLetterCol = 0;
     for (unsigned long i = 0; i < col.size(); ++i) {
-      for (unsigned long j = 0; j < i; ++j) {
-        if (col[j] > col[i]) {
-          ++nbBadBlock;
-          break;
-        }
+      if (maxLetterCol > col[i]) {
+        ++nbBadBlock;
+      } else {
+        maxLetterCol = col[i];
       }
     }
   }
