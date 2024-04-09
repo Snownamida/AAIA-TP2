@@ -43,7 +43,7 @@ public:
     std::size_t operator()(const State &s) const {
       static string st;
       st = string(s.stack[0]);
-      for (uint i = 1; i < s.stack.size(); i++)
+      for (unsigned int i = 1; i < s.stack.size(); i++)
         st += " " + s.stack[i];
       return std::hash<string>{}(st);
     }

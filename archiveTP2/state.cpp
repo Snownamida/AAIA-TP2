@@ -52,18 +52,14 @@ int State::getBloc(int i, int j) const {
 
 void State::print() const {
   // Print this
-  for (uint k = 0; k < stack.size(); k++)
+  for (unsigned int k = 0; k < stack.size(); k++)
     cout << "stack[" << k << "]=" << stack[k] << " ";
-  printf("\n");
 }
-
-
 
 bool State::operator==(const State &s) const {
   // Return true if this=s
-  for (uint i = 0; i < stack.size(); i++)
+  for (unsigned int i = 0; i < stack.size(); i++)
     if (stack[i] != s.stack[i])
       return false;
   return true;
 }
-
