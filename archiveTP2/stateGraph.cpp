@@ -59,10 +59,7 @@ int StateGraph::searchActions(const State &s) {
   return actions.size();
 }
 
-int StateGraph::h0(const State &s) const {
-  int c = 0;
-  return c;
-}
+int StateGraph::h0(const State &s) const { return 0; }
 int StateGraph::h1(const State &s) const {
   int c = 0;
   for (auto it = s.stack.begin(); it != s.stack.end() - 1; ++it) {
@@ -74,8 +71,8 @@ int StateGraph::h2(const State &s) const {
   int est_h1 = h1(s);
 
   auto lastCol = s.stack.back();
-  int nbBadBlock = nbBlocs;
-  int lettreDuBonBlock = 'a' + nbBlocs - 1;
+  int nbBadBlock = lastCol.length();
+  char lettreDuBonBlock = 'a' + nbBlocs - 1;
 
   for (unsigned long i = 0; i < lastCol.length(); ++i) {
     if (lastCol[i] == lettreDuBonBlock) {
@@ -92,22 +89,25 @@ int StateGraph::h3(const State &s) const {
   return c;
 }
 int StateGraph::h4(const State &s) const {
-  int c = h2(s);
+  int est_h2 = h2(s);
 
   int nbBadBlock = 0;
 
+  // 在不是最后一列的列上, 查看有多少个方块在它之下有比它大的方块.
+  // 这些方块需要在某一时刻挪到不是最后一列的位置上,
+  // 让它们下面那些比它大的方块先去最后一列
   for (auto it = s.stack.begin(); it < s.stack.end() - 1; ++it) {
     auto col = *it;
-    if (col.size() == 1)
-      continue;
-    for (unsigned long i = 1; i < col.size(); i++) {
-      if (col[i] < col[i - 1]) {
-        nbBadBlock += col.size() - i;
-        break;
+    for (unsigned long i = 0; i < col.size(); ++i) {
+      for (unsigned long j = 0; j < i; ++j) {
+        if (col[j] > col[i]) {
+          ++nbBadBlock;
+          break;
+        }
       }
     }
   }
-  return c + nbBadBlock;
+  return est_h2 + nbBadBlock;
 }
 
 int StateGraph::heuristic(const State &s) const { return h4(s); }
@@ -128,6 +128,7 @@ void StateGraph::print(const State &s, const State &s_succ) {
   if (s == s0) {
     printf("Init: ");
     s.print();
+    cout << "h : " << heuristic(s);
     printf("\n");
   }
   // Print the action that has been used to go from s to s_succ
@@ -137,6 +138,7 @@ void StateGraph::print(const State &s, const State &s_succ) {
         if (i != j && State(s, i, j) == s_succ) {
           printf("%d->%d: ", i, j);
           s_succ.print();
+          cout << "h : " << heuristic(s_succ);
           printf("\n");
           return;
         }
